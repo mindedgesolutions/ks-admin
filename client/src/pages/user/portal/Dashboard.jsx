@@ -3,7 +3,7 @@ import { UserPageHeader, UserPageWrapper } from "../../../components";
 import WelcomeBg from "../../../assets/welcome-bg.jpg";
 import { useUserContext } from "./UserLayout";
 import date from "date-and-time";
-import { applicationStatus } from "../../../utils/functions";
+import { applicationStatus, dateFormatFancy } from "../../../utils/functions";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
@@ -38,7 +38,7 @@ const Dashboard = () => {
                     )
                   </h3>
                   <h3 className="fst-italic mt-1 fw-normal">
-                    Registered mobile no: {appUser.mobile}
+                    Registered mobile no: {userMwin.mobile}
                   </h3>
                 </div>
               </div>
@@ -73,7 +73,7 @@ const Dashboard = () => {
                       <span className="text-secondary">{userMwin.mwin}</span>
                     </td>
                     <td>Migrant worker registration</td>
-                    <td>{date.format(appDate, "ddd, MMM DD YYYY")}</td>
+                    <td>{dateFormatFancy(userMwin.regDate)}</td>
                     <td>{applicationStatus(userMwin.status)}</td>
                     <td className="text-end">
                       <Link to="/user/nominee-info">

@@ -53,7 +53,13 @@ const AgencyInfo = () => {
       toast.success(`Information updated`);
       setIsIdle(false);
 
-      setUserMwin({ ...userMwin, mwin: response.data.mwin, status: "P" });
+      setUserMwin({
+        ...userMwin,
+        mwin: response.data.response.mwin,
+        status: "P",
+        mobile: response.data.response.mobile,
+        regDate: response.data.response.createdDate,
+      });
 
       const newSet = { ...userAccess, bank: true };
       setUserAcess(newSet);
@@ -77,7 +83,7 @@ const AgencyInfo = () => {
 
             <div className="col d-flex flex-column">
               <form onSubmit={handleFormSubmit} autoComplete="off">
-                <input type="hidden" name="appId" value={appId} />
+                <input type="hidden" name="appId" defaultValue={appId} />
 
                 <div className="card-body">
                   <div className="row row-cards">

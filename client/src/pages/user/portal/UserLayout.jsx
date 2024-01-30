@@ -55,6 +55,8 @@ const UserLayout = () => {
   const [userMwin, setUserMwin] = useState({
     mwin: data?.data?.rows[0]?.identification_number || "",
     status: data?.data?.rows[0]?.status || "I",
+    mobile: data?.data?.rows[0]?.mobile || "",
+    regDate: data?.data?.rows[0]?.created_date || "",
   });
 
   const logoutAppUser = async () => {

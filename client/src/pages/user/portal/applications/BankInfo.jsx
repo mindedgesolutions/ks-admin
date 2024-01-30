@@ -99,7 +99,7 @@ const BankInfo = () => {
 
             <div className="col d-flex flex-column">
               <form onSubmit={handleFormSubmit} autoComplete="off">
-                <input type="hidden" name="appId" value={appId} />
+                <input type="text" name="appId" defaultValue={appId} />
 
                 <div className="card-body">
                   <div className="row row-cards">

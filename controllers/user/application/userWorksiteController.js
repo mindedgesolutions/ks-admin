@@ -187,7 +187,13 @@ export const updateAgencyInfo = async (req, res) => {
 
     await pool.query("COMMIT");
 
-    res.status(StatusCodes.OK).json({ mwin });
+    const response = {
+      mwin: mwin,
+      createdDate: new Date(),
+      mobile: mobile,
+    };
+
+    res.status(StatusCodes.OK).json({ response });
   } catch (error) {
     await pool.query("ROLLBACK");
     throw new BadRequestError(`Data not saved! Please try again.`);

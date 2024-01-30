@@ -46,6 +46,11 @@ export const dateFormat = (value) => {
   return date.format(formatted, "DD-MM-YYYY");
 };
 
+export const dateFormatFancy = (value) => {
+  const formatted = new Date(value);
+  return date.format(formatted, "ddd, MMM DD YYYY");
+};
+
 export const datePickerFormat = (value) => {
   const formatted = new Date(value);
   return date.format(formatted, "YYYY-MM-DD");
