@@ -72,31 +72,41 @@ export const updateOtp = async (req, res) => {
 
 export const otpLogin = async (req, res) => {
   const { mobile } = req.body;
-  const data = await pool.query(
-    `select id from k_migrant_worker_master where mobile=$1`,
-    [mobile]
-  );
-  const applicationId = data.rowCount > 0 ? data.rows[0].id : null;
+  try {
+    await pool.query("BEGIN");
 
-  const usertoken = createUserJWT({
-    mobile: mobile,
-    applicationId: applicationId,
-  });
+    const data = await pool.query(
+      `select id from k_migrant_worker_master where mobile=$1`,
+      [mobile]
+    );
+    const applicationId = data.rowCount > 0 ? data.rows[0].id : null;
 
-  const oneDay = 1000 * 60 * 60 * 24;
-  res.cookie("usertoken", usertoken, {
-    httpOnly: true,
-    expires: new Date(Date.now() + oneDay),
-    secure: process.env.NODE_ENV === "production",
-  });
+    const usertoken = createUserJWT({
+      mobile: mobile,
+      applicationId: applicationId,
+    });
 
-  const access = await pool.query(
-    `select kwd.present_country from k_migrant_work_details kwd join k_migrant_worker_master kwm on kwm.id = kwd.application_id where kwm.mobile=$1`,
-    [mobile]
-  );
-  const userAccess = access.rows[0];
+    const oneDay = 1000 * 60 * 60 * 24;
+    res.cookie("usertoken", usertoken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + oneDay),
+      secure: process.env.NODE_ENV === "production",
+    });
 
-  res.status(StatusCodes.OK).json({ userAccess });
+    const access = await pool.query(
+      `select kwd.engaged_as from k_migrant_work_details kwd join k_migrant_worker_master kwm on kwm.id = kwd.application_id where kwm.mobile=$1`,
+      [mobile]
+    );
+    const userAccess = access?.rows[0]?.engaged_as ? true : false;
+
+    await pool.query("COMMIT");
+
+    res.status(StatusCodes.OK).json({ userAccess });
+  } catch (error) {
+    await pool.query("ROLLBACK");
+    console.log(error);
+    throw new BadRequestError(`Something went wrong! Please try again later`);
+  }
 };
 
 export const appLogout = async (req, res) => {

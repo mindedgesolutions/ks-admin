@@ -53,8 +53,8 @@ const UserLayout = () => {
     data.data.rowCount > 0 ? data.data.rows[0].id : ""
   );
   const [userMwin, setUserMwin] = useState({
-    mwin: data.data.rows[0].identification_number || "",
-    status: data.data.rows[0].status || "I",
+    mwin: data?.data?.rows[0]?.identification_number || "",
+    status: data?.data?.rows[0]?.status || "I",
   });
 
   const logoutAppUser = async () => {

@@ -8,8 +8,8 @@ export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    const result = await customFetch.post("/auth/otplogin", data);
-    if (result.data.userAccess) {
+    const response = await customFetch.post("/auth/otplogin", data);
+    if (response.data.userAccess) {
       return redirect("/user/dashboard");
     }
     return redirect("/user/personal-info");
