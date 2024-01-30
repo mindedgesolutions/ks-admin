@@ -5,6 +5,24 @@ import { getApplicationId } from "../../../utils/functions.js";
 // Bank & Nominee information functions start ------
 export const addBankInfo = async (req, res) => {
   const { mobile, applicationId } = req.appUser;
+  const {
+    appId,
+    ifscCode,
+    bankName,
+    branchName,
+    accountNo,
+    khadyasathiNo,
+    sasthyasathiNo,
+    schemes,
+    nomineeName,
+    nomineeRelation,
+    nomineeMobile,
+    nomineeAadhaar,
+  } = req.body;
+  console.log(
+    `${appId}, ${ifscCode}, ${bankName}, ${branchName}, ${accountNo}, ${khadyasathiNo}, ${sasthyasathiNo}, ${schemes}, ${nomineeName}, ${nomineeRelation}, ${nomineeMobile}, ${nomineeAadhaar}`
+  );
+  return;
 
   res.status(StatusCodes.CREATED).json({ msg: `success` });
 };

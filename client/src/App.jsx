@@ -58,8 +58,6 @@ import { loader as applicationSingle } from "./pages/admin/applications/Applicat
 // Website actions
 import { action as userOtpLogin } from "./components/user/website/OtpLoginForm";
 
-// User actions
-
 // User loaders
 import { loader as userLayoutLoader } from "./pages/user/portal/UserLayout";
 import { loader as banks } from "./pages/user/portal/applications/BankInfo";

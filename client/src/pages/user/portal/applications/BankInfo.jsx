@@ -12,8 +12,13 @@ import customFetch from "../../../../utils/customFetch";
 import { splitErrors } from "../../../../utils/showErrors";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { relationships } from "../../../../utils/data";
+import {
+  getAccessFromLocalStorage,
+  relationships,
+} from "../../../../utils/data";
 import { useUserContext } from "../UserLayout";
+import { useDispatch } from "react-redux";
+import { updateAccess } from "../../../../features/access/accessSlice";
 
 export const loader = async () => {
   try {
@@ -51,6 +56,8 @@ const BankInfo = () => {
   });
 
   const [selectedSchemes, setSelectedSchemes] = useState([]);
+  const [userAccess, setUserAcess] = useState(getAccessFromLocalStorage());
+  const dispatch = useDispatch();
 
   const handleSchemeChange = async (selected) => {
     setSelectedSchemes(selected);
@@ -75,12 +82,17 @@ const BankInfo = () => {
     const formData = new FormData(e.currentTarget);
     const inputValues = Object.fromEntries(formData);
     const process =
-      info.data.data.rowCount > 0 ? customFetch.patch : customFetch.post;
-    const msg = info.data.data.rowCount > 0 ? `Data updated` : `Data added`;
+      info.data?.data?.rowCount > 0 ? customFetch.patch : customFetch.post;
+    const msg = info.data?.data?.rowCount > 0 ? `Data updated` : `Data added`;
     try {
       await process("/applications/user/bank-nominee", inputValues);
       toast.success(msg);
       setIsIdle(false);
+
+      const newSet = { ...userAccess, family: true };
+      setUserAcess(newSet);
+      dispatch(updateAccess(newSet));
+
       navigate("/user/agency-info");
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
@@ -99,7 +111,7 @@ const BankInfo = () => {
 
             <div className="col d-flex flex-column">
               <form onSubmit={handleFormSubmit} autoComplete="off">
-                <input type="text" name="appId" defaultValue={appId} />
+                <input type="hidden" name="appId" defaultValue={appId} />
 
                 <div className="card-body">
                   <div className="row row-cards">
