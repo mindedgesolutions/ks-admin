@@ -26,10 +26,10 @@ export const loader = async () => {
     const banks = await customFetch.get("/master/banks");
     const schemes = await customFetch.get("/master/schemes");
     const info = await customFetch.get("/applications/user/bank-nominee");
-    // const userSchemes = await customFetch.get(
-    //   "/applications/user/selected-schemes"
-    // );
-    return { banks, schemes, info };
+    const userSchemes = await customFetch.get(
+      "/applications/user/selected-schemes"
+    );
+    return { banks, schemes, info, userSchemes };
   } catch (error) {
     splitErrors(error?.response?.data?.msg);
     return error;
@@ -73,10 +73,10 @@ const BankInfo = () => {
   };
 
   const [dbBankDetails, setDbBankDetails] = useState({
-    ifscCode: info.data?.data?.rows[0].ifsc_code || "",
-    bankName: info.data?.data?.rows[0].bank_name || "",
-    bankBranch: info.data?.data?.rows[0].bank_branch || "",
-    bankAc: info.data?.data?.rows[0].bank_account || "",
+    dbIfscCode: info.data?.data?.rows[0]?.ifsc_code || "",
+    dbBankName: info.data?.data?.rows[0]?.bank_name || "",
+    dbBankBranch: info.data?.data?.rows[0]?.bank_branch || "",
+    dbBankAc: info.data?.data?.rows[0]?.bank_account || "",
   });
 
   const [form, setForm] = useState({
@@ -164,7 +164,7 @@ const BankInfo = () => {
                         name="schemes"
                         options={optionSchemes}
                         onChange={handleSchemeChange}
-                        value={selectedValues}
+                        // value={selectedValues}
                         isMulti
                       />
                     </div>

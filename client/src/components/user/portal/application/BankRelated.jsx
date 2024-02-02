@@ -6,13 +6,15 @@ import ModalAddNewBank from "./ModalAddNewBank";
 
 const BankRelated = ({ options, dbBankDetails }) => {
   const [bankDetails, setBankDetails] = useState({
-    selectedIfsc: dbBankDetails.ifscCode || "",
-    bankName: dbBankDetails.bankName || "",
-    bankBranch: dbBankDetails.bankBranch || "",
-    bankAc: dbBankDetails.bankAc || "",
+    bankName: dbBankDetails.dbBankName || "",
+    branchName: dbBankDetails.dbBankBranch || "",
+    accountNo: dbBankDetails.dbBankAc || "",
   });
+  const [selectedIfsc, setSelectedIfsc] = useState(
+    dbBankDetails.dbIfscCode || ""
+  );
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     setBankDetails({ ...bankDetails, [e.target.name]: e.target.value });
   };
 
@@ -23,16 +25,16 @@ const BankRelated = ({ options, dbBankDetails }) => {
   const handleShow = () => setShow(true);
   // Add new bank modal ends ------
 
-  const handleIfscChange = async (selectedOption) => {
+  const handleChange = async (selectedOption) => {
     const newIfsc = selectedOption.value;
-    setBankDetails({ ...bankDetails, selectedIfsc: newIfsc });
+    setSelectedIfsc(newIfsc);
     try {
       const data = await customFetch.get(`/master/bank-single/${newIfsc}`);
       const bank = data.data.data.rows[0];
       setBankDetails({
         ...bankDetails,
         bankName: bank.bank_name,
-        bankBranch: bank.branch_name,
+        branchName: bank.branch_name,
       });
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
@@ -57,11 +59,11 @@ const BankRelated = ({ options, dbBankDetails }) => {
         </label>
         <AsyncSelect
           loadOptions={loadOptions}
-          onChange={handleIfscChange}
+          onChange={handleChange}
           name="ifscCode"
           value={{
-            label: bankDetails.selectedIfsc,
-            value: bankDetails.selectedIfsc,
+            label: selectedIfsc,
+            value: selectedIfsc,
           }}
           autoFocus={true}
         />
@@ -85,7 +87,7 @@ const BankRelated = ({ options, dbBankDetails }) => {
           name="bankName"
           id="bankName"
           className="form-control"
-          onChange={handleChange}
+          onChange={handleInputChange}
           value={bankDetails.bankName}
         />
       </div>
@@ -98,8 +100,8 @@ const BankRelated = ({ options, dbBankDetails }) => {
           name="branchName"
           id="branchName"
           className="form-control"
-          value={bankDetails.bankBranch}
-          onChange={handleChange}
+          value={bankDetails.branchName}
+          onChange={handleInputChange}
         />
       </div>
       <div className="col-md-6 col-sm-12">
@@ -110,8 +112,8 @@ const BankRelated = ({ options, dbBankDetails }) => {
           type="text"
           name="accountNo"
           id="accountNo"
-          onChange={handleChange}
-          value={bankDetails.bankAc}
+          onChange={handleInputChange}
+          value={bankDetails.accountNo}
           className="form-control"
         />
       </div>

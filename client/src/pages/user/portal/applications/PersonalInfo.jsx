@@ -131,15 +131,6 @@ const PersonalInfo = () => {
     }
   };
 
-  // const changeAccess = (e) => {
-  //   const newSet = { ...userAccess, [e.target.name]: true };
-  //   setUserAccess(newSet);
-  // };
-
-  // useEffect(() => {
-  //   dispatch(updateAccess(userAccess));
-  // }, [userAccess]);
-
   return (
     <>
       <UserPageHeader title="Personal Information" />
@@ -164,38 +155,6 @@ const PersonalInfo = () => {
                           handleChange={handleChange}
                           autoFocus={true}
                         />
-                        {/* <button
-                          type="button"
-                          className="btn btn-success btn-sm me-1"
-                          name="worksite"
-                          onClick={changeAccess}
-                        >
-                          Add work
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-success btn-sm me-1"
-                          name="agency"
-                          onClick={changeAccess}
-                        >
-                          Add agency
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-success btn-sm me-1"
-                          name="bank"
-                          onClick={changeAccess}
-                        >
-                          Add bank
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-success btn-sm me-1"
-                          name="family"
-                          onClick={changeAccess}
-                        >
-                          Add family
-                        </button> */}
                       </div>
                       <div className="col-md-6 col-sm-12">
                         <UserInputText

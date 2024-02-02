@@ -35,6 +35,7 @@ import {
 import {
   addBankInfo,
   getBankInfo,
+  getUserSchemes,
   updateBankInfo,
 } from "../controllers/user/application/userNomineeController.js";
 import { uploadDocument } from "../controllers/user/application/userDocumentController.js";
@@ -81,7 +82,7 @@ router
 router.route("/user/documents").post(protectUserRoute, uploadDocument); // Documents
 
 // User schemes related starts ------
-// router.get("/user/selected-schemes", protectUserRoute, getUserSchemes);
+router.get("/user/selected-schemes", protectUserRoute, getUserSchemes);
 // User schemes related end ------
 
 // User family related routes start ------

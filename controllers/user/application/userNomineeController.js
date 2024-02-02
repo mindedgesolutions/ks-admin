@@ -88,9 +88,15 @@ export const getBankInfo = async (req, res) => {
   res.status(StatusCodes.OK).json({ data });
 };
 
-// export const getUserSchemes = async (req, res) => {
-//   const { mobile, applicationId } = req.appUser;
-//   const appId = applicationId || (await getApplicationId(mobile));
-//   console.log(appId);
-// };
+export const getUserSchemes = async (req, res) => {
+  const { mobile, applicationId } = req.appUser;
+  const appId = applicationId || (await getApplicationId(mobile));
+
+  const data = await pool.query(
+    `select kas.scheme_id, ms.schemes_name from k_availed_schemes as kas join master_schemes as ms on kas.scheme_id=ms.id where kas.application_id=$1 and kas.member_id is null`,
+    [appId]
+  );
+
+  res.status(StatusCodes.OK).json({ data });
+};
 // Bank & Nominee information functions end ------
