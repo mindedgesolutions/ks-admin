@@ -93,7 +93,7 @@ export const getUserSchemes = async (req, res) => {
   const appId = applicationId || (await getApplicationId(mobile));
 
   const data = await pool.query(
-    `select kas.scheme_id, ms.schemes_name from k_availed_schemes as kas join master_schemes as ms on kas.scheme_id=ms.id where kas.application_id=$1 and kas.member_id is null`,
+    `select kas.scheme_id, ms.schemes_name from k_availed_schemes as kas join master_schemes as ms on kas.scheme_id=ms.id where kas.application_id=$1 and kas.member_id is null order by ms.schemes_name`,
     [appId]
   );
 

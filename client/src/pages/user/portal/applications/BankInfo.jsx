@@ -47,8 +47,13 @@ const BankInfo = () => {
   const [isIdle, setIsIdle] = useState(false);
   const navigate = useNavigate();
 
-  const { banks, schemes, info } = useLoaderData();
-  // console.log(userSchemes);
+  const { banks, schemes, info, userSchemes } = useLoaderData();
+  const dbSchemes = [];
+  userSchemes.data.data.rows.map((scheme) => {
+    const schemeElement = { value: scheme.id, label: scheme.schemes_name };
+    dbSchemes.push(schemeElement);
+  });
+
   const options = [];
   banks.data.data.rows.map((bank) => {
     const bankElement = { value: bank.ifsc_code, label: bank.ifsc_code };
@@ -60,7 +65,9 @@ const BankInfo = () => {
     optionSchemes.push(schemeElement);
   });
 
-  const [selectedSchemes, setSelectedSchemes] = useState([]);
+  const [selectedSchemes, setSelectedSchemes] = useState(
+    userSchemes.data.data.rows || []
+  );
   const [sendSchemes, setSendSchemes] = useState(
     JSON.stringify(selectedSchemes) || []
   );
@@ -164,7 +171,7 @@ const BankInfo = () => {
                         name="schemes"
                         options={optionSchemes}
                         onChange={handleSchemeChange}
-                        // value={selectedValues}
+                        value={dbSchemes}
                         isMulti
                       />
                     </div>
