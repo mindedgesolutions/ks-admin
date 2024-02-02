@@ -9,7 +9,7 @@ export const updatePassword = async (req, res) => {
   const password = await hashPassword("welcome123");
   console.log(password);
   const text = `update users set pass=$1 where uid=$2`;
-  const values = [password, 28];
+  const values = [password, 43];
   await pool.query(text, values);
   res.status(StatusCodes.ACCEPTED).json({ msg: `password updated` });
 };

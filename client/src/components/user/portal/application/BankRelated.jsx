@@ -4,10 +4,17 @@ import { splitErrors } from "../../../../utils/showErrors";
 import customFetch from "../../../../utils/customFetch";
 import ModalAddNewBank from "./ModalAddNewBank";
 
-const BankRelated = ({ options }) => {
-  const [selectedIfsc, setSelectedIfsc] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [branchName, setBranchName] = useState("");
+const BankRelated = ({ options, dbBankDetails }) => {
+  const [bankDetails, setBankDetails] = useState({
+    selectedIfsc: dbBankDetails.ifscCode || "",
+    bankName: dbBankDetails.bankName || "",
+    bankBranch: dbBankDetails.bankBranch || "",
+    bankAc: dbBankDetails.bankAc || "",
+  });
+
+  const handleChange = (e) => {
+    setBankDetails({ ...bankDetails, [e.target.name]: e.target.value });
+  };
 
   // Add new bank modal starts ------
   const [show, setShow] = useState(false);
@@ -16,14 +23,17 @@ const BankRelated = ({ options }) => {
   const handleShow = () => setShow(true);
   // Add new bank modal ends ------
 
-  const handleChange = async (selectedOption) => {
+  const handleIfscChange = async (selectedOption) => {
     const newIfsc = selectedOption.value;
-    setSelectedIfsc(newIfsc);
+    setBankDetails({ ...bankDetails, selectedIfsc: newIfsc });
     try {
       const data = await customFetch.get(`/master/bank-single/${newIfsc}`);
       const bank = data.data.data.rows[0];
-      setBankName(bank.bank_name);
-      setBranchName(bank.branch_name);
+      setBankDetails({
+        ...bankDetails,
+        bankName: bank.bank_name,
+        bankBranch: bank.branch_name,
+      });
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
       return error;
@@ -47,11 +57,11 @@ const BankRelated = ({ options }) => {
         </label>
         <AsyncSelect
           loadOptions={loadOptions}
-          onChange={handleChange}
+          onChange={handleIfscChange}
           name="ifscCode"
           value={{
-            label: selectedIfsc,
-            value: selectedIfsc,
+            label: bankDetails.selectedIfsc,
+            value: bankDetails.selectedIfsc,
           }}
           autoFocus={true}
         />
@@ -75,8 +85,8 @@ const BankRelated = ({ options }) => {
           name="bankName"
           id="bankName"
           className="form-control"
-          value={bankName}
-          onChange={() => {}}
+          onChange={handleChange}
+          value={bankDetails.bankName}
         />
       </div>
       <div className="col-md-6 col-sm-12">
@@ -88,8 +98,8 @@ const BankRelated = ({ options }) => {
           name="branchName"
           id="branchName"
           className="form-control"
-          value={branchName}
-          onChange={() => {}}
+          value={bankDetails.bankBranch}
+          onChange={handleChange}
         />
       </div>
       <div className="col-md-6 col-sm-12">
@@ -100,6 +110,8 @@ const BankRelated = ({ options }) => {
           type="text"
           name="accountNo"
           id="accountNo"
+          onChange={handleChange}
+          value={bankDetails.bankAc}
           className="form-control"
         />
       </div>

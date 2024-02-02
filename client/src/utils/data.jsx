@@ -8,32 +8,28 @@ export const notifications = [
   {
     title: "Test title 1",
     name: "Payal Karmakar",
-    body:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic animi odit asperiores! Perspiciatis, voluptatibus vero repudiandae sit tempora laudantium incidunt officiis animi laboriosam. Assumenda quasi nisi quidem? Natus, nisi aut.",
+    body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic animi odit asperiores! Perspiciatis, voluptatibus vero repudiandae sit tempora laudantium incidunt officiis animi laboriosam. Assumenda quasi nisi quidem? Natus, nisi aut.",
     date: "2023-01-12 15:30:56",
     avatar: true,
   },
   {
     title: "Test title 2",
     name: "Arko Banerjee",
-    body:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic animi odit asperiores! Perspiciatis, voluptatibus vero repudiandae sit tempora laudantium incidunt officiis animi laboriosam. Assumenda quasi nisi quidem? Natus, nisi aut.",
+    body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic animi odit asperiores! Perspiciatis, voluptatibus vero repudiandae sit tempora laudantium incidunt officiis animi laboriosam. Assumenda quasi nisi quidem? Natus, nisi aut.",
     date: "2023-01-12 15:30:56",
     avatar: true,
   },
   {
     title: "Test title 3",
     name: "Jyoti Bag",
-    body:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic animi odit asperiores! Perspiciatis, voluptatibus vero repudiandae sit tempora laudantium incidunt officiis animi laboriosam. Assumenda quasi nisi quidem? Natus, nisi aut.",
+    body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic animi odit asperiores! Perspiciatis, voluptatibus vero repudiandae sit tempora laudantium incidunt officiis animi laboriosam. Assumenda quasi nisi quidem? Natus, nisi aut.",
     date: "2023-01-12 15:30:56",
     avatar: false,
   },
   {
     title: "Test title 4",
     name: "Moumita Chatterjee",
-    body:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic animi odit asperiores! Perspiciatis, voluptatibus vero repudiandae sit tempora laudantium incidunt officiis animi laboriosam. Assumenda quasi nisi quidem? Natus, nisi aut.",
+    body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic animi odit asperiores! Perspiciatis, voluptatibus vero repudiandae sit tempora laudantium incidunt officiis animi laboriosam. Assumenda quasi nisi quidem? Natus, nisi aut.",
     date: "2023-01-12 15:30:56",
     avatar: false,
   },
@@ -202,24 +198,43 @@ export const engageTypes = [
 ];
 
 export const relationships = [
-  { id: nanoid(), value: 1, text: "Father", isActive: true },
-  { id: nanoid(), value: 2, text: "Mother", isActive: true },
-  { id: nanoid(), value: 3, text: "Daughter", isActive: true },
-  { id: nanoid(), value: 4, text: "Son", isActive: true },
-  { id: nanoid(), value: 5, text: "Brother", isActive: true },
-  { id: nanoid(), value: 6, text: "Sister", isActive: true },
-  { id: nanoid(), value: 7, text: "Grandfather", isActive: true },
-  { id: nanoid(), value: 8, text: "Grandmother", isActive: true },
-  { id: nanoid(), value: 9, text: "Grandson", isActive: true },
-  { id: nanoid(), value: 10, text: "Grandmother", isActive: true },
-  { id: nanoid(), value: 11, text: "Uncle", isActive: true },
-  { id: nanoid(), value: 12, text: "Aunt", isActive: true },
-  { id: nanoid(), value: 13, text: "Nephew", isActive: true },
-  { id: nanoid(), value: 14, text: "Niece", isActive: true },
-  { id: nanoid(), value: 15, text: "Sister-in-law", isActive: true },
-  { id: nanoid(), value: 16, text: "Brother-in-law", isActive: true },
-  { id: nanoid(), value: 17, text: "Mother-in-law", isActive: true },
-  { id: nanoid(), value: 18, text: "Father-in-law", isActive: true },
+  { id: nanoid(), value: "Father", text: "Father", isActive: true },
+  { id: nanoid(), value: "Mother", text: "Mother", isActive: true },
+  { id: nanoid(), value: "Daughter", text: "Daughter", isActive: true },
+  { id: nanoid(), value: "Son", text: "Son", isActive: true },
+  { id: nanoid(), value: "Brother", text: "Brother", isActive: true },
+  { id: nanoid(), value: "Sister", text: "Sister", isActive: true },
+  { id: nanoid(), value: "Grandfather", text: "Grandfather", isActive: true },
+  { id: nanoid(), value: "Grandmother", text: "Grandmother", isActive: true },
+  { id: nanoid(), value: "Grandson", text: "Grandson", isActive: true },
+  { id: nanoid(), value: "Uncle", text: "Uncle", isActive: true },
+  { id: nanoid(), value: "Aunt", text: "Aunt", isActive: true },
+  { id: nanoid(), value: "Nephew", text: "Nephew", isActive: true },
+  { id: nanoid(), value: "Niece", text: "Niece", isActive: true },
+  {
+    id: nanoid(),
+    value: "Sister-in-law",
+    text: "Sister-in-law",
+    isActive: true,
+  },
+  {
+    id: nanoid(),
+    value: "Brother-in-law",
+    text: "Brother-in-law",
+    isActive: true,
+  },
+  {
+    id: nanoid(),
+    value: "Mother-in-law",
+    text: "Mother-in-law",
+    isActive: true,
+  },
+  {
+    id: nanoid(),
+    value: "Father-in-law",
+    text: "Father-in-law",
+    isActive: true,
+  },
 ];
 
 export const blockLabel = (value) => {

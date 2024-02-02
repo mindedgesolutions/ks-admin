@@ -80,6 +80,10 @@ router
 
 router.route("/user/documents").post(protectUserRoute, uploadDocument); // Documents
 
+// User schemes related starts ------
+// router.get("/user/selected-schemes", protectUserRoute, getUserSchemes);
+// User schemes related end ------
+
 // User family related routes start ------
 router.post("/user/family-info", protectUserRoute, addFamilyMember);
 router.get("/user/all-members", protectUserRoute, getAllMembers);

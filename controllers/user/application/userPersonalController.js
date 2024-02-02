@@ -37,6 +37,7 @@ export const addPersonalInfo = async (req, res) => {
     qualification,
     skillDesc,
   } = req.body;
+
   const query = `insert into k_migrant_worker_master (mobile, status, name, father_husband_name, gender, dob, age, caste, aadhar_no, emergency_contact_no, epic_no, permanent_address, permanent_dist, permanent_subdivision, permanent_areatype, permanent_areacode, permanent_villward, permanent_pin, permanent_ps, religion, religion_other, qualification, technical_skill, flag_web_app) values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, 'W') RETURNING id`;
 
   const values = [

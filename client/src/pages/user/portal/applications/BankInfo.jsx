@@ -19,12 +19,16 @@ import {
 import { useUserContext } from "../UserLayout";
 import { useDispatch } from "react-redux";
 import { updateAccess } from "../../../../features/access/accessSlice";
+import { toast } from "react-toastify";
 
 export const loader = async () => {
   try {
     const banks = await customFetch.get("/master/banks");
     const schemes = await customFetch.get("/master/schemes");
     const info = await customFetch.get("/applications/user/bank-nominee");
+    // const userSchemes = await customFetch.get(
+    //   "/applications/user/selected-schemes"
+    // );
     return { banks, schemes, info };
   } catch (error) {
     splitErrors(error?.response?.data?.msg);
@@ -44,6 +48,7 @@ const BankInfo = () => {
   const navigate = useNavigate();
 
   const { banks, schemes, info } = useLoaderData();
+  // console.log(userSchemes);
   const options = [];
   banks.data.data.rows.map((bank) => {
     const bankElement = { value: bank.ifsc_code, label: bank.ifsc_code };
@@ -56,12 +61,23 @@ const BankInfo = () => {
   });
 
   const [selectedSchemes, setSelectedSchemes] = useState([]);
+  const [sendSchemes, setSendSchemes] = useState(
+    JSON.stringify(selectedSchemes) || []
+  );
   const [userAccess, setUserAcess] = useState(getAccessFromLocalStorage());
   const dispatch = useDispatch();
 
   const handleSchemeChange = async (selected) => {
     setSelectedSchemes(selected);
+    setSendSchemes(JSON.stringify(selected));
   };
+
+  const [dbBankDetails, setDbBankDetails] = useState({
+    ifscCode: info.data?.data?.rows[0].ifsc_code || "",
+    bankName: info.data?.data?.rows[0].bank_name || "",
+    bankBranch: info.data?.data?.rows[0].bank_branch || "",
+    bankAc: info.data?.data?.rows[0].bank_account || "",
+  });
 
   const [form, setForm] = useState({
     khadyasathiNo: info.data?.data?.rows[0]?.khadyasathi_no || "",
@@ -80,7 +96,8 @@ const BankInfo = () => {
     setIsIdle(true);
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const inputValues = Object.fromEntries(formData);
+    let inputValues = Object.fromEntries(formData);
+    inputValues = { ...inputValues, schemes: sendSchemes };
     const process =
       info.data?.data?.rowCount > 0 ? customFetch.patch : customFetch.post;
     const msg = info.data?.data?.rowCount > 0 ? `Data updated` : `Data added`;
@@ -93,7 +110,7 @@ const BankInfo = () => {
       setUserAcess(newSet);
       dispatch(updateAccess(newSet));
 
-      navigate("/user/agency-info");
+      navigate("/user/family-info");
     } catch (error) {
       splitErrors(error?.response?.data?.msg);
       setIsIdle(false);
@@ -115,7 +132,10 @@ const BankInfo = () => {
 
                 <div className="card-body">
                   <div className="row row-cards">
-                    <BankRelated options={options} />
+                    <BankRelated
+                      dbBankDetails={dbBankDetails}
+                      options={options}
+                    />
 
                     <div className="col-md-6 col-sm-12">
                       <UserInputText
@@ -144,6 +164,7 @@ const BankInfo = () => {
                         name="schemes"
                         options={optionSchemes}
                         onChange={handleSchemeChange}
+                        value={selectedValues}
                         isMulti
                       />
                     </div>
