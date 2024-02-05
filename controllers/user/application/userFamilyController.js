@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import pool from "../../../db.js";
 import { BadRequestError } from "../../../errors/customErrors.js";
+import { getApplicationId } from "../../../utils/functions.js";
 
 // Family information functions start ------
 export const addFamilyMember = async (req, res) => {
@@ -13,16 +14,20 @@ export const addFamilyMember = async (req, res) => {
     memberRelation,
     schemes,
   } = req.body;
-  const { mobile } = req.appUser;
-  const applicationId = await pool.query(
-    `select id, identification_number from k_migrant_worker_master where mobile=$1`,
-    [mobile]
-  );
-  const appId = Number(applicationId.rows[0].id);
-  const mwin = applicationId.rows[0].identification_number;
-  if (appId) {
+  const { mobile, applicationId } = req.appUser;
+
+  try {
+    await pool.query("BEGIN");
+
+    const appId = applicationId || (await getApplicationId(mobile));
+    const getMwin = await pool.query(
+      `select identification_number from k_migrant_worker_master where id=$1`,
+      [appId]
+    );
+    const mwin = getMwin.rows[0].identification_number;
+    const epic = memberEpic ?? null;
     const data = await pool.query(
-      `insert into k_migrant_family_info(mwin_no, application_id, member_name, member_gender, member_age, member_aadhar_no, member_relationship) values($1, $2, $3, $4, $5, $6, $7)`,
+      `insert into k_migrant_family_info(mwin_no, application_id, member_name, member_gender, member_age, member_aadhar_no, member_relationship, member_epic) values($1, $2, $3, $4, $5, $6, $7, $8) returning id`,
       [
         mwin,
         appId,
@@ -31,38 +36,46 @@ export const addFamilyMember = async (req, res) => {
         memberAge,
         memberAadhaar,
         memberRelation,
+        epic,
       ]
     );
+    const memberId = data.rows[0].id;
+    if (schemes.length > 0) {
+      const values = JSON.parse(schemes)
+        .map((scheme) => {
+          return `('${appId}', ${memberId}, '${scheme.value}')`;
+        })
+        .join(", ");
+
+      await pool.query(
+        `insert into k_availed_schemes(application_id, member_id, scheme_id) values ${values}`
+      );
+    }
+
+    await pool.query("COMMIT");
+
     res.status(StatusCodes.CREATED).json({ data: `success` });
-  } else {
-    throw new BadRequestError(`Something went wrong! Please try again`);
+  } catch (error) {
+    await pool.query("ROLLBACK");
+    console.log(error);
+    throw new BadRequestError(error);
   }
 };
 
 export const getAllMembers = async (req, res) => {
-  const { mobile } = req.appUser;
-  const applicationId = await pool.query(
-    `select id, identification_number from k_migrant_worker_master where mobile=$1`,
-    [mobile]
+  const { mobile, applicationId } = req.appUser;
+  const searchBy = applicationId || (await getApplicationId(mobile));
+  const data = await pool.query(
+    `select kmfi.*, kas.scheme_id from k_migrant_family_info kmfi left join k_availed_schemes kas on kmfi.id = kas.member_id where kmfi.application_id=$1`,
+    [searchBy]
   );
-  const appId = Number(applicationId.rows[0].id);
-  if (appId) {
-    const data = await pool.query(
-      `select * from k_migrant_family_info where application_id=$1`,
-      [appId]
-    );
-    res.status(StatusCodes.OK).json({ data });
-  } else {
-    throw new BadRequestError(
-      `Something went wrong! Please try refreshing the page`
-    );
-  }
+  res.status(StatusCodes.OK).json({ data });
 };
 
 export const getSingleMember = async (req, res) => {
   const { id } = req.params;
   const data = await pool.query(
-    `select * from k_migrant_family_info where id=$1`,
+    `select kmfi.*, kas.scheme_id from k_migrant_family_info as kmfi join k_availed_schemes as kas on kmfi.id = kas.member_id where kas.member_id=$1`,
     [id]
   );
   res.status(StatusCodes.OK).json({ data });

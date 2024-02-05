@@ -56,3 +56,17 @@ export const getApplicationId = async (mobile) => {
   const dbid = data.rowCount > 0 ? data.rows[0].id : null;
   return dbid;
 };
+
+export const updateBankId = async (ifsc) => {
+  const bankId = await pool.query(
+    `select id from bank_branch_master where ifsc_code=$1`,
+    [ifsc]
+  );
+  const dbBankId = bankId.rowCount > 0 ? bankId.rows[0].id : null;
+  if (dbBankId) {
+    await pool.query(
+      `update k_migrant_worker_master set bank_id=$1 where ifsc_code=$2`,
+      [dbBankId, ifsc]
+    );
+  }
+};

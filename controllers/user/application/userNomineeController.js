@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import pool from "../../../db.js";
-import { getApplicationId } from "../../../utils/functions.js";
+import { getApplicationId, updateBankId } from "../../../utils/functions.js";
 import { BadRequestError } from "../../../errors/customErrors.js";
 
 // Bank & Nominee information functions start ------
@@ -99,4 +99,29 @@ export const getUserSchemes = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ data });
 };
+
+export const updateOldBankId = async (req, res) => {
+  try {
+    await pool.query("BEGIN");
+
+    const data = await pool.query(
+      `select distinct ifsc_code from k_migrant_worker_master where bank_name is not null and ifsc_code is not null`,
+      []
+    );
+    data.rows.map((bank) => {
+      return updateBankId(bank.ifsc_code);
+    });
+
+    await pool.query("COMMIT");
+
+    res.status(StatusCodes.ACCEPTED).json({ data: `success` });
+  } catch (error) {
+    await pool.query("ROLLBACK");
+    console.log(error);
+    throw new BadRequestError(`Something went wrong`);
+  }
+};
+
+export const addNewBank = async (req, res) => {};
+
 // Bank & Nominee information functions end ------

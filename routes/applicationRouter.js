@@ -79,8 +79,6 @@ router
   .post([protectUserRoute, validateBank], addBankInfo)
   .patch([protectUserRoute, validateBank], updateBankInfo); // Bank / Nominee information
 
-router.route("/user/documents").post(protectUserRoute, uploadDocument); // Documents
-
 // User schemes related starts ------
 router.get("/user/selected-schemes", protectUserRoute, getUserSchemes);
 // User schemes related end ------
@@ -92,6 +90,8 @@ router.get("/user/single-member/:id", protectUserRoute, getSingleMember);
 router.patch("/user/update-member/:id", protectUserRoute, updateSingleMember);
 router.delete("/user/delete/:id", deleteMember);
 // User family related routes end ------
+
+router.route("/user/documents").post(protectUserRoute, uploadDocument); // Documents
 
 // User routes end ------
 

@@ -31,11 +31,6 @@ export const loader = async () => {
 
 const FamilyInfo = () => {
   const { schemes, members } = useLoaderData();
-  const optionSchemes = [];
-  schemes.data.data.rows.map((scheme) => {
-    const schemeElement = { value: scheme.id, label: scheme.schemes_name };
-    optionSchemes.push(schemeElement);
-  });
 
   const [form, setForm] = useState({
     memberName: "",
@@ -44,7 +39,6 @@ const FamilyInfo = () => {
     memberRelation: "",
     memberAadhaar: "",
     memberEpic: "",
-    schemes: [],
     btnLabel: "Add member",
   });
   const [allMembers, setAllMembers] = useState(members.data.data.rows || []);
@@ -55,6 +49,20 @@ const FamilyInfo = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Schemes related starts ------
+  const optionSchemes = [];
+  schemes.data.data.rows.map((scheme) => {
+    const schemeElement = { value: scheme.id, label: scheme.schemes_name };
+    optionSchemes.push(schemeElement);
+  });
+
+  const [selectedSchemes, setSelectedSchemes] = useState([]);
+
+  const handleSchemeChange = (selected) => {
+    setSelectedSchemes(JSON.stringify(selected));
+  };
+  // Schemes related ends ------
+
   const [modal, setModal] = useState({
     showModal: false,
     memberId: "",
@@ -64,10 +72,6 @@ const FamilyInfo = () => {
   const relationshipsList = relationships.filter(
     (relation) => relation.isActive === true
   );
-
-  const handleSchemeChange = (selected) => {
-    setForm({ ...form, schemes: selected });
-  };
 
   const getMembers = async () => {
     const members = await customFetch.get("/applications/user/all-members");
@@ -80,9 +84,10 @@ const FamilyInfo = () => {
     setIsIdle(true);
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
+    let inputValues = Object.fromEntries(formData);
+    inputValues = { ...inputValues, schemes: selectedSchemes };
     try {
-      await customFetch.post("/applications/user/family-info", data);
+      await customFetch.post("/applications/user/family-info", inputValues);
       toast.success(`Family member added`);
       getMembers();
       setForm({

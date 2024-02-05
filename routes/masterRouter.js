@@ -12,6 +12,7 @@ import {
   getSubDivisions,
   getWards,
 } from "../controllers/masterController.js";
+import { updateOldBankId } from "../controllers/user/application/userNomineeController.js";
 
 router.get("/districts", getDistricts);
 router.get("/sub-divisions/:district", getSubDivisions);
@@ -24,5 +25,6 @@ router.get("/bank-single/:ifsc", getBankSingle);
 router.get("/schemes", getSchemes);
 
 router.get("/district-name/:id", getDistrictName);
+router.get("/update-bank-id", updateOldBankId);
 
 export default router;

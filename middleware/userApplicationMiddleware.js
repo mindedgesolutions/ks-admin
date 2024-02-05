@@ -234,3 +234,9 @@ export const validateBank = withValidationErrors([
     .custom(isAadhaarNumber)
     .withMessage(`Invalid Aadhaar card no.`),
 ]);
+// Add new bank starts ------
+const validateAddNewBank = withValidationErrors([]);
+
+// Add new bank ends ------
+
+// Bank & Nominee information form validation ends ------

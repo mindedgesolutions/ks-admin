@@ -25,7 +25,7 @@ const FamilyTable = ({ members, confirmDelete, handleEditInfo }) => {
                 <td>{member.member_name.toUpperCase()}</td>
                 <td>{member.member_relationship.toUpperCase()}</td>
                 <td>{member.member_aadhar_no}</td>
-                <td>NEI</td>
+                <td>{member.member_epic}</td>
                 <td>
                   <FaRegEdit
                     title="Edit"

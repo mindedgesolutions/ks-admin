@@ -53,7 +53,7 @@ const BankRelated = ({ options, dbBankDetails }) => {
 
   return (
     <>
-      <div className="col-md-4 col-sm-12">
+      <div className="col-md-6 col-sm-12">
         <label htmlFor="ifscCode" className="form-label required">
           IFS code
         </label>
@@ -68,7 +68,7 @@ const BankRelated = ({ options, dbBankDetails }) => {
           autoFocus={true}
         />
       </div>
-      <div className="col-md-2 col-sm-12">
+      {/* <div className="col-md-2 col-sm-12">
         <label className="form-label">&nbsp;</label>
         <button
           type="button"
@@ -77,7 +77,7 @@ const BankRelated = ({ options, dbBankDetails }) => {
         >
           Add new
         </button>
-      </div>
+      </div> */}
       <div className="col-md-6 col-sm-12">
         <label htmlFor="bankName" className="form-label required">
           Bank name
