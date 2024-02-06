@@ -235,8 +235,35 @@ export const validateBank = withValidationErrors([
     .withMessage(`Invalid Aadhaar card no.`),
 ]);
 // Add new bank starts ------
-const validateAddNewBank = withValidationErrors([]);
+export const validateAddNewBank = withValidationErrors([]);
 
 // Add new bank ends ------
 
 // Bank & Nominee information form validation ends ------
+
+// Add family member form validation starts ------
+export const validateFamilyMember = withValidationErrors([
+  body("memberName")
+    .notEmpty()
+    .withMessage(`Enter family member's name`)
+    .custom(isValidName)
+    .withMessage(`Invalid name format`),
+  body("memberGender").notEmpty().withMessage(`Select gender`),
+  body("memberAge").notEmpty().withMessage(`Enter family member's age`),
+  body("memberRelation")
+    .notEmpty()
+    .withMessage(`Select relation with the member`),
+  body("memberAadhaar")
+    .notEmpty()
+    .withMessage(`Enter family member's Aadhaar no.`)
+    .custom(isAadhaarNumber)
+    .withMessage(`Invalid Aadhaar no.`),
+  body("memberEpic").custom((value, { req }) => {
+    const { memberAge } = req.body;
+    if (memberAge >= 18 && !value) {
+      throw new BadRequestError(`Enter EPIC no.`);
+    }
+    return true;
+  }),
+]);
+// Add family member form validation ends ------

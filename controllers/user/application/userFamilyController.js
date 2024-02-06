@@ -66,7 +66,7 @@ export const getAllMembers = async (req, res) => {
   const { mobile, applicationId } = req.appUser;
   const searchBy = applicationId || (await getApplicationId(mobile));
   const data = await pool.query(
-    `select kmfi.*, kas.scheme_id from k_migrant_family_info kmfi left join k_availed_schemes kas on kmfi.id = kas.member_id where kmfi.application_id=$1`,
+    `select kmfi.* from k_migrant_family_info kmfi where kmfi.application_id=$1`,
     [searchBy]
   );
   res.status(StatusCodes.OK).json({ data });
@@ -93,11 +93,23 @@ export const updateSingleMember = async (req, res) => {
 };
 
 export const deleteMember = async (req, res) => {
-  const { id } = req.params;
-  const data = await pool.query(
-    `delete from k_migrant_family_info where id=$1`,
-    [id]
-  );
-  res.status(StatusCodes.NO_CONTENT).json({ data: `success` });
+  const { appId, id } = req.params;
+  try {
+    await pool.query("BEGIN");
+
+    await pool.query(`delete from k_migrant_family_info where id=$1`, [id]);
+    const count = await pool.query(
+      `select count(id) from k_migrant_family_info where application_id=$1`,
+      [appId]
+    );
+
+    await pool.query("COMMIT");
+
+    res.status(StatusCodes.OK).json({ data: count });
+  } catch (error) {
+    await pool.query("ROLLBACK");
+    console.log(error);
+    throw new BadRequestError(`Something went wrong! ${error}`);
+  }
 };
 // Family information functions end ------

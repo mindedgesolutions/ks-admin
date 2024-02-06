@@ -10,13 +10,19 @@ import {
   UserPageWrapper,
 } from "../../../../components";
 import ApplicationMenu from "../../../../components/user/portal/application/ApplicationMenu";
-import { genders, relationships } from "../../../../utils/data";
+import {
+  genders,
+  getAccessFromLocalStorage,
+  relationships,
+} from "../../../../utils/data";
 import Select from "react-select";
 import { splitErrors } from "../../../../utils/showErrors";
 import customFetch from "../../../../utils/customFetch";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUserContext } from "../UserLayout";
+import { useDispatch } from "react-redux";
+import { updateAccess } from "../../../../features/access/accessSlice";
 
 export const loader = async () => {
   try {
@@ -44,6 +50,9 @@ const FamilyInfo = () => {
   const [allMembers, setAllMembers] = useState(members.data.data.rows || []);
   const [editId, setEditId] = useState("");
   const [isIdle, setIsIdle] = useState(false);
+  const { appId } = useUserContext();
+  const [userAccess, setUserAcess] = useState(getAccessFromLocalStorage());
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -63,12 +72,6 @@ const FamilyInfo = () => {
   };
   // Schemes related ends ------
 
-  const [modal, setModal] = useState({
-    showModal: false,
-    memberId: "",
-    memberName: "",
-  });
-
   const relationshipsList = relationships.filter(
     (relation) => relation.isActive === true
   );
@@ -86,10 +89,21 @@ const FamilyInfo = () => {
     const formData = new FormData(e.currentTarget);
     let inputValues = Object.fromEntries(formData);
     inputValues = { ...inputValues, schemes: selectedSchemes };
+    const process = editId ? customFetch.patch : customFetch.post;
+    const url = editId
+      ? `/applications/user/update-member/${editId}`
+      : `/applications/user/add-member`;
+    const msg = editId ? `Information updated` : `Member added`;
+
     try {
-      await customFetch.post("/applications/user/family-info", inputValues);
-      toast.success(`Family member added`);
+      await process(url, inputValues);
+      toast.success(msg);
       getMembers();
+
+      const newSet = { ...userAccess, doc: true };
+      setUserAcess(newSet);
+      dispatch(updateAccess(newSet));
+
       setForm({
         ...form,
         ...{
@@ -103,8 +117,10 @@ const FamilyInfo = () => {
           btnLabel: "Add member",
         },
       });
+
       setIsIdle(false);
     } catch (error) {
+      setIsIdle(false);
       splitErrors(error?.response?.data?.msg);
       return error;
     }
@@ -144,41 +160,47 @@ const FamilyInfo = () => {
     }
   };
 
-  const handlEditSave = async (e) => {
-    setIsIdle(true);
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
-    try {
-      await customFetch.patch(
-        `/applications/user/update-member/${editId}`,
-        data
-      );
-      toast.success(`Information updated`);
-      getMembers();
-      setForm({
-        ...form,
-        ...{
-          memberName: "",
-          memberGender: "",
-          memberAge: "",
-          memberRelation: "",
-          memberAadhaar: "",
-          memberEpic: "",
-          schemes: [],
-          btnLabel: "Add member",
-        },
-      });
-      setEditId("");
-      setIsIdle(false);
-    } catch (error) {
-      splitErrors(error?.response?.data?.msg);
-      return error;
-    }
-  };
+  // const handlEditSave = async (e) => {
+  //   setIsIdle(true);
+  //   e.preventDefault();
+  //   const formData = new FormData(e.currentTarget);
+  //   const data = Object.fromEntries(formData);
+  //   try {
+  //     await customFetch.patch(
+  //       `/applications/user/update-member/${editId}`,
+  //       data
+  //     );
+  //     toast.success(`Information updated`);
+  //     getMembers();
+  //     setForm({
+  //       ...form,
+  //       ...{
+  //         memberName: "",
+  //         memberGender: "",
+  //         memberAge: "",
+  //         memberRelation: "",
+  //         memberAadhaar: "",
+  //         memberEpic: "",
+  //         schemes: [],
+  //         btnLabel: "Add member",
+  //       },
+  //     });
+  //     setEditId("");
+  //     setIsIdle(false);
+  //   } catch (error) {
+  //     splitErrors(error?.response?.data?.msg);
+  //     return error;
+  //   }
+  // };
   // Edit family member / Form edit ends ------
 
   // Modal related and Delete member functions start ------
+  const [modal, setModal] = useState({
+    showModal: false,
+    memberId: "",
+    memberName: "",
+  });
+
   const confirmDelete = (id, name) => {
     setModal({
       ...modal,
@@ -191,13 +213,21 @@ const FamilyInfo = () => {
   };
 
   const deleteConfirmed = async () => {
-    await customFetch.delete(`/applications/user/delete/${modal.memberId}`);
+    const response = await customFetch.delete(
+      `/applications/user/delete/${appId}/${modal.memberId}`
+    );
     toast.success(`Member deleted successfully`);
     getMembers();
     setModal({
       ...modal,
       ...{ showModal: false, memberId: "", memberName: "" },
     });
+
+    if (response?.data?.data?.rows[0]?.count == 0) {
+      const newSet = { ...userAccess, doc: false };
+      setUserAcess(newSet);
+      dispatch(updateAccess(newSet));
+    }
   };
   // Modal related and Delete member functions end ------
 
@@ -226,10 +256,13 @@ const FamilyInfo = () => {
             <ApplicationMenu />
 
             <div className="col d-flex flex-column">
-              <form
+              {/* <form
                 onSubmit={!editId ? handleFormSubmit : handlEditSave}
                 autoComplete="off"
-              >
+              > */}
+              <form onSubmit={handleFormSubmit} autoComplete="off">
+                <input type="hidden" name="appId" defaultValue={appId} />
+
                 <div className="card-body">
                   <div className="row row-cards">
                     <div className="col-md-6 col-sm-12">

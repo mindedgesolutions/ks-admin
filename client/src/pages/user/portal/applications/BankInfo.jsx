@@ -171,7 +171,7 @@ const BankInfo = () => {
                         name="schemes"
                         options={optionSchemes}
                         onChange={handleSchemeChange}
-                        value={dbSchemes}
+                        // value={dbSchemes}
                         isMulti
                       />
                     </div>

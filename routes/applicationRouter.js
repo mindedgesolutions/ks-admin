@@ -16,6 +16,7 @@ import {
 import {
   validateAgency,
   validateBank,
+  validateFamilyMember,
   validatePersonal,
   validateWorksite,
 } from "../middleware/userApplicationMiddleware.js";
@@ -84,11 +85,16 @@ router.get("/user/selected-schemes", protectUserRoute, getUserSchemes);
 // User schemes related end ------
 
 // User family related routes start ------
-router.post("/user/family-info", protectUserRoute, addFamilyMember);
-router.get("/user/all-members", protectUserRoute, getAllMembers);
-router.get("/user/single-member/:id", protectUserRoute, getSingleMember);
+router.post(
+  "/user/add-member",
+  [protectUserRoute, validateFamilyMember],
+  addFamilyMember
+);
 router.patch("/user/update-member/:id", protectUserRoute, updateSingleMember);
-router.delete("/user/delete/:id", deleteMember);
+router.get("/user/single-member/:id", protectUserRoute, getSingleMember);
+router.delete("/user/delete/:appId/:id", deleteMember);
+
+router.get("/user/all-members", protectUserRoute, getAllMembers);
 // User family related routes end ------
 
 router.route("/user/documents").post(protectUserRoute, uploadDocument); // Documents
