@@ -165,7 +165,37 @@ const Documents = () => {
                           <span className="text-muted fs-5 fst-italic">
                             Upload scan copy of Application Form with Self
                             Certificate <br />( Max size 500KB in PDF only, File
-                            name should be without space)
+                            name should be without space )
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-md-12 col-sm-12">
+                      <h3 className="card-title">Passport</h3>
+                      <div className="row align-items-center">
+                        <div className="col-auto">
+                          <img
+                            src={Avatar}
+                            className="avatar avatar-lg"
+                            alt=""
+                          />
+                        </div>
+                        <div className="col-auto">
+                          <input
+                            type="file"
+                            name="selfCertificate"
+                            onChange={handleChange}
+                            className="btn"
+                          />
+                          <a href="#" className="btn btn-ghost-danger ms-3">
+                            Clear selection
+                          </a>
+                        </div>
+                        <div className="col-auto">
+                          <span className="text-muted fs-5 fst-italic">
+                            Upload scan copy of first page of your passport{" "}
+                            <br />( Max size 150KB in PDF only, File name should
+                            be without space )
                           </span>
                         </div>
                       </div>

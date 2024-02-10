@@ -90,7 +90,11 @@ router.post(
   [protectUserRoute, validateFamilyMember],
   addFamilyMember
 );
-router.patch("/user/update-member/:id", protectUserRoute, updateSingleMember);
+router.patch(
+  "/user/update-member/:appId/:id",
+  [protectUserRoute, validateFamilyMember],
+  updateSingleMember
+);
 router.get("/user/single-member/:id", protectUserRoute, getSingleMember);
 router.delete("/user/delete/:appId/:id", deleteMember);
 

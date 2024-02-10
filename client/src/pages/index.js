@@ -41,4 +41,5 @@ export { default as AgencyInfo } from "./user/portal/applications/AgencyInfo";
 export { default as BankInfo } from "./user/portal/applications/BankInfo";
 export { default as Documents } from "./user/portal/applications/Documents";
 export { default as FamilyInfo } from "./user/portal/applications/FamilyInfo";
+export { default as OverView } from "./user/portal/applications/OverView";
 // Website and User Application pages end ------

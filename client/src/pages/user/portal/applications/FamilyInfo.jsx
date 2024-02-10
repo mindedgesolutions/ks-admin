@@ -88,10 +88,10 @@ const FamilyInfo = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     let inputValues = Object.fromEntries(formData);
-    inputValues = { ...inputValues, schemes: selectedSchemes };
+    inputValues = { ...inputValues, memberSchemes: selectedSchemes };
     const process = editId ? customFetch.patch : customFetch.post;
     const url = editId
-      ? `/applications/user/update-member/${editId}`
+      ? `/applications/user/update-member/${appId}/${editId}`
       : `/applications/user/add-member`;
     const msg = editId ? `Information updated` : `Member added`;
 
@@ -104,19 +104,7 @@ const FamilyInfo = () => {
       setUserAcess(newSet);
       dispatch(updateAccess(newSet));
 
-      setForm({
-        ...form,
-        ...{
-          memberName: "",
-          memberGender: "",
-          memberAge: "",
-          memberRelation: "",
-          memberAadhaar: "",
-          memberEpic: "",
-          schemes: [],
-          btnLabel: "Add member",
-        },
-      });
+      resetForm();
 
       setIsIdle(false);
     } catch (error) {
@@ -131,16 +119,18 @@ const FamilyInfo = () => {
   const handleEditInfo = async (id) => {
     setEditId(id);
     try {
-      const { data } = await customFetch.get(
+      const response = await customFetch.get(
         `/applications/user/single-member/${id}`
       );
+      // console.log(response.data.meta.rows);
       const {
         member_aadhar_no,
         member_age,
         member_gender,
         member_name,
         member_relationship,
-      } = data.data.rows[0];
+        member_epic,
+      } = response.data.data.rows[0];
       setForm({
         ...form,
         ...{
@@ -149,8 +139,7 @@ const FamilyInfo = () => {
           memberAge: member_age,
           memberRelation: member_relationship,
           memberAadhaar: member_aadhar_no,
-          memberEpic: "123456",
-          schemes: [],
+          memberEpic: member_epic,
           btnLabel: "Save changes",
         },
       });
@@ -159,39 +148,6 @@ const FamilyInfo = () => {
       return error;
     }
   };
-
-  // const handlEditSave = async (e) => {
-  //   setIsIdle(true);
-  //   e.preventDefault();
-  //   const formData = new FormData(e.currentTarget);
-  //   const data = Object.fromEntries(formData);
-  //   try {
-  //     await customFetch.patch(
-  //       `/applications/user/update-member/${editId}`,
-  //       data
-  //     );
-  //     toast.success(`Information updated`);
-  //     getMembers();
-  //     setForm({
-  //       ...form,
-  //       ...{
-  //         memberName: "",
-  //         memberGender: "",
-  //         memberAge: "",
-  //         memberRelation: "",
-  //         memberAadhaar: "",
-  //         memberEpic: "",
-  //         schemes: [],
-  //         btnLabel: "Add member",
-  //       },
-  //     });
-  //     setEditId("");
-  //     setIsIdle(false);
-  //   } catch (error) {
-  //     splitErrors(error?.response?.data?.msg);
-  //     return error;
-  //   }
-  // };
   // Edit family member / Form edit ends ------
 
   // Modal related and Delete member functions start ------
@@ -223,6 +179,9 @@ const FamilyInfo = () => {
       ...{ showModal: false, memberId: "", memberName: "" },
     });
 
+    resetForm();
+    setSelectedSchemes([]);
+
     if (response?.data?.data?.rows[0]?.count == 0) {
       const newSet = { ...userAccess, doc: false };
       setUserAcess(newSet);
@@ -241,10 +200,10 @@ const FamilyInfo = () => {
         memberRelation: "",
         memberAadhaar: "",
         memberEpic: "",
-        schemes: [],
         btnLabel: "Add member",
       },
     });
+    setSelectedSchemes([]);
   };
 
   return (
@@ -256,10 +215,6 @@ const FamilyInfo = () => {
             <ApplicationMenu />
 
             <div className="col d-flex flex-column">
-              {/* <form
-                onSubmit={!editId ? handleFormSubmit : handlEditSave}
-                autoComplete="off"
-              > */}
               <form onSubmit={handleFormSubmit} autoComplete="off">
                 <input type="hidden" name="appId" defaultValue={appId} />
 
@@ -326,7 +281,7 @@ const FamilyInfo = () => {
                         Availed schemes
                       </label>
                       <Select
-                        name="schemes"
+                        name="memberSchemes"
                         options={optionSchemes}
                         onChange={handleSchemeChange}
                         isMulti
